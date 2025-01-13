@@ -9,7 +9,7 @@ class ComparisonBase(BaseModel):
 class ComparisonCreate(ComparisonBase):
     pass
 
-class ComparisonOut(ComparisonBase):
+class ComparisonDTO(ComparisonBase):
     id: int
 
     class Config:

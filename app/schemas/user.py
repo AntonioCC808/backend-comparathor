@@ -4,7 +4,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
-class UserOut(BaseModel):
+class UserDTO(BaseModel):
     user_id: int
     email: EmailStr
 
