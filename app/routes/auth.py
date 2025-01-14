@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from app.schemas.user import UserCreate, UserDTO
 from app.models.user import User
@@ -39,7 +39,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)) -> UserDTO:
     return UserDTO(user_id=new_user.user_id, email=new_user.email)
 
 @router.post("/login")
-def login(email: str, password: str, db: Session = Depends(get_db)) -> dict:
+def login(email: str = Form(...),  password: str = Form(...), db: Session = Depends(get_db)) -> dict:
     """
     Authenticate a user and generate a JWT token.
 

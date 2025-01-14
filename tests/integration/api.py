@@ -29,7 +29,7 @@ class TestAuthRoutes(unittest.TestCase):
             "email": "login@example.com",
             "password": "password"
         })
-        response = client.post("/api/v1/auth/login", json={
+        response = client.post("/api/v1/auth/login", data={
             "email": "login@example.com",
             "password": "password"
         })
