@@ -30,4 +30,4 @@ class ProductMetadata(Base):
     attribute = Column(String)
     value = Column(String)
     score = Column(Float)
-    product = relationship("Product", back_populates="metadata")
+    product = relationship("Product", back_populates="product_metadata")
