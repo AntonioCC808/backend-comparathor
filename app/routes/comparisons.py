@@ -33,7 +33,7 @@ def get_comparisons(skip: int = 0, limit: int = 10, db: Session = Depends(get_db
     ]
 
 
-@router.post("/", response_model=Comparison)
+@router.post("/", response_model=ComparisonDTO)
 def create_comparison(comparison: ComparisonCreate, db: Session = Depends(get_db)) -> ComparisonDTO:
     """
     Create a new comparison record.

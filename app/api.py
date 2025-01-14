@@ -1,6 +1,5 @@
 from fastapi import FastAPI, APIRouter
 from app.routes import auth, products, comparisons
-from app.database import Base, engine
 
 # Initialize FastAPI
 app = FastAPI(
@@ -22,6 +21,3 @@ api_router.include_router(comparisons.router, prefix="/comparisons", tags=["Comp
 
 # Add API Router to the main app
 app.include_router(api_router)
-
-# Initialize database tables
-Base.metadata.create_all(bind=engine)

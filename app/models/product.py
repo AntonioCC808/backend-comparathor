@@ -21,7 +21,7 @@ class Product(Base):
     score = Column(Float)
     user = relationship("User", back_populates="products")
     product_type = relationship("ProductType", back_populates="products")
-    metadata = relationship("ProductMetadata", back_populates="product")
+    product_metadata = relationship("ProductMetadata", back_populates="product")
 
 class ProductMetadata(Base):
     __tablename__ = "product_metadata"
