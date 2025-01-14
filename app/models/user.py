@@ -1,5 +1,7 @@
 from pydantic import EmailStr
 from sqlalchemy import Column, Integer, String, Enum
+from sqlalchemy.orm import relationship
+
 from app.database import Base
 
 class User(Base):
@@ -7,4 +9,6 @@ class User(Base):
     user_id = Column(Integer, primary_key=True, index=True)
     email = Column(EmailStr, unique=True, index=True)
     password = Column(String)
-    role = Column(Enum("admin", "user", name="user_roles"), default="user")
+    role = Column(String, default="user")
+    products = relationship("Product", back_populates="user")
+    comparisons = relationship("Comparison", back_populates="user")
