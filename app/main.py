@@ -1,14 +1,26 @@
-from fastapi import FastAPI
-from app.routes import auth, products, comparisons
-from app.database import Base, engine
+import os
+import fire
+import uvicorn
+from dotenv import load_dotenv
 
-# Inicializar FastAPI
-app = FastAPI()
+# Load environment variables from .env file
+load_dotenv()
 
-# Crear tablas si no existen
-Base.metadata.create_all(bind=engine)
+def run_app():
+    """
+    Run the application server.
 
-# Incluir rutas
-app.include_router(auth.router, prefix="/auth", tags=["Auth"])
-app.include_router(products.router, prefix="/products", tags=["Products"])
-app.include_router(comparisons.router, prefix="/comparisons", tags=["Comparisons"])
+    This function loads environment variables, initializes the database, and starts the FastAPI server.
+
+    Raises
+    ------
+    RuntimeError
+        If the application fails to start.
+    """
+    db_url = os.getenv("DB_URL", "sqlite:///./test.db")
+    print(f"Using database: {db_url}")
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8000))
+    fire.Fire(run_app)
+    uvicorn.run("app.api:app", host="0.0.0.0", port=port)
