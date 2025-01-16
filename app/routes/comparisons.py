@@ -1,13 +1,18 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.models.comparison import Comparison
-from app.schemas.comparison import ComparisonCreate, ComparisonDTO
+from app.schemas.comparison import ComparisonDTO, ComparisonBase
 from app.database import get_db
 
 router = APIRouter()
 
+
 @router.get("/", response_model=list[ComparisonDTO])
-def get_comparisons(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)) -> list[ComparisonDTO]:
+def get_comparisons(
+    skip: int = 0, limit: int = 10, db: Session = Depends(get_db)
+) -> List[ComparisonDTO]:
     """
     Retrieve a list of comparisons.
 
@@ -28,19 +33,26 @@ def get_comparisons(skip: int = 0, limit: int = 10, db: Session = Depends(get_db
     comparisons = db.query(Comparison).offset(skip).limit(limit).all()
     return [
         ComparisonDTO(
-            title=comparison.name, description=comparison.brand, id=comparison.score, id_user=comparison.id
-        ) for comparison in comparisons
+            title=comparison.title,
+            description=comparison.description,
+            date_created=comparison.date_created,
+            id_user=comparison.id_user,
+            id=comparison.id,
+        )
+        for comparison in comparisons
     ]
 
 
 @router.post("/", response_model=ComparisonDTO)
-def create_comparison(comparison: ComparisonCreate, db: Session = Depends(get_db)) -> ComparisonDTO:
+def create_comparison(
+    comparison: ComparisonBase, db: Session = Depends(get_db)
+) -> ComparisonDTO:
     """
     Create a new comparison record.
 
     Parameters
     ----------
-    comparison : ComparisonCreate
+    comparison : ComparisonBase
         The details of the comparison to be created.
     db : Session
         The database session dependency.
@@ -50,7 +62,7 @@ def create_comparison(comparison: ComparisonCreate, db: Session = Depends(get_db
     ComparisonDTO
         The newly created comparison record.
     """
-    new_comparison = Comparison(**comparison.dict())
+    new_comparison = Comparison(**comparison.model_dump())
     db.add(new_comparison)
     db.commit()
     db.refresh(new_comparison)
@@ -59,5 +71,5 @@ def create_comparison(comparison: ComparisonCreate, db: Session = Depends(get_db
         description=new_comparison.description,
         id=new_comparison.id,
         id_user=new_comparison.id_user,
+        date_created=new_comparison.date_created,
     )
-

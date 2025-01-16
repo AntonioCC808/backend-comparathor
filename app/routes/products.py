@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models.product import Product
@@ -6,8 +8,11 @@ from app.database import get_db
 
 router = APIRouter()
 
+
 @router.get("/", response_model=list[ProductDTO])
-def get_products(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)) -> list[ProductDTO]:
+def get_products(
+    skip: int = 0, limit: int = 10, db: Session = Depends(get_db)
+) -> List[ProductDTO]:
     """
     Retrieve a list of products.
 
@@ -28,9 +33,15 @@ def get_products(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)) 
     products = db.query(Product).offset(skip).limit(limit).all()
     return [
         ProductDTO(
-            name=product.name, brand=product.brand, score=product.score, id=product.id, id_user=product.id_user
-        ) for product in products
+            name=product.name,
+            brand=product.brand,
+            score=product.score,
+            id=product.id,
+            id_user=product.id_user,
+        )
+        for product in products
     ]
+
 
 @router.post("/", response_model=ProductDTO)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> ProductDTO:
@@ -58,11 +69,14 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> Pro
         brand=new_product.brand,
         score=new_product.score,
         id=new_product.id,
-        id_user=new_product.id_user
+        id_user=new_product.id_user,
     )
 
+
 @router.put("/{product_id}", response_model=ProductDTO)
-def update_product(product_id: int, product: ProductCreate, db: Session = Depends(get_db)) -> ProductDTO:
+def update_product(
+    product_id: int, product: ProductCreate, db: Session = Depends(get_db)
+) -> ProductDTO:
     """
     Update an existing product record.
 
@@ -97,8 +111,9 @@ def update_product(product_id: int, product: ProductCreate, db: Session = Depend
         brand=db_product.brand,
         score=db_product.score,
         id=db_product.id,
-        id_user=db_product.id_user
+        id_user=db_product.id_user,
     )
+
 
 @router.delete("/{product_id}")
 def delete_product(product_id: int, db: Session = Depends(get_db)) -> dict:

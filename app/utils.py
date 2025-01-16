@@ -5,6 +5,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 
+
 def hash_password(password: str) -> str:
     """
     Hash a plaintext password.
@@ -20,6 +21,7 @@ def hash_password(password: str) -> str:
         The hashed password.
     """
     return pwd_context.hash(password)
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
@@ -38,6 +40,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         True if the passwords match, False otherwise.
     """
     return pwd_context.verify(plain_password, hashed_password)
+
 
 def create_access_token(data: dict) -> str:
     """

@@ -1,13 +1,16 @@
 from pydantic import BaseModel
 
+
 class ProductBase(BaseModel):
     name: str
     brand: str
     score: float
     id_user: int
 
+
 class ProductCreate(ProductBase):
     pass
+
 
 class ProductDTO(ProductBase):
     id: int
