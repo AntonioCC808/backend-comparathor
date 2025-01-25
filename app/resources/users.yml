@@ -1,0 +1,13 @@
+users:
+  - user_id: 1
+    email: "admin@example.com"
+    password: "adminpassword"
+    role: "admin"
+  - user_id: 2
+    email: "user1@example.com"
+    password: "password123"
+    role: "user"
+  - user_id: 3
+    email: "user2@example.com"
+    password: "password456"
+    role: "user"
