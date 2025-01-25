@@ -143,3 +143,36 @@ def delete_product(product_id: int, db: Session = Depends(get_db)) -> dict:
     db.delete(db_product)
     db.commit()
     return {"detail": "Product deleted successfully"}
+
+@router.get("/{product_id}", response_model=ProductDTO)
+def get_product(product_id: int, db: Session = Depends(get_db)) -> ProductDTO:
+    """
+    Retrieve a single product by its ID.
+
+    Parameters
+    ----------
+    product_id : int
+        The ID of the product to retrieve.
+    db : Session
+        The database session dependency.
+
+    Returns
+    -------
+    ProductDTO
+        The product record.
+
+    Raises
+    ------
+    HTTPException
+        If the product is not found.
+    """
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return ProductDTO(
+        name=product.name,
+        brand=product.brand,
+        score=product.score,
+        id=product.id,
+        id_user=product.id_user,
+    )

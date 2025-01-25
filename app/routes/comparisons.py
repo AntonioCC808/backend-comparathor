@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models.comparison import Comparison
 from app.schemas.comparison import ComparisonDTO, ComparisonBase
@@ -73,3 +73,61 @@ def create_comparison(
         id_user=new_comparison.id_user,
         date_created=new_comparison.date_created,
     )
+
+
+@router.get("/{comparison_id}", response_model=ComparisonDTO)
+def get_comparison(
+    comparison_id: int, db: Session = Depends(get_db)
+) -> ComparisonDTO:
+    """
+    Retrieve a specific comparison by ID.
+
+    Parameters
+    ----------
+    comparison_id : int
+        The ID of the comparison to retrieve.
+    db : Session
+        The database session dependency.
+
+    Returns
+    -------
+    ComparisonDTO
+        The comparison record.
+    """
+    comparison = db.query(Comparison).filter(Comparison.id == comparison_id).first()
+    if not comparison:
+        raise HTTPException(status_code=404, detail="Comparison not found")
+    return ComparisonDTO(
+        title=comparison.title,
+        description=comparison.description,
+        date_created=comparison.date_created,
+        id_user=comparison.id_user,
+        id=comparison.id,
+    )
+
+
+@router.delete("/{comparison_id}", response_model=dict)
+def delete_comparison(
+    comparison_id: int, db: Session = Depends(get_db)
+) -> dict:
+    """
+    Delete a comparison by ID.
+
+    Parameters
+    ----------
+    comparison_id : int
+        The ID of the comparison to delete.
+    db : Session
+        The database session dependency.
+
+    Returns
+    -------
+    dict
+        A confirmation message.
+    """
+    comparison = db.query(Comparison).filter(Comparison.id == comparison_id).first()
+    if not comparison:
+        raise HTTPException(status_code=404, detail="Comparison not found")
+    db.delete(comparison)
+    db.commit()
+    return {"message": "Comparison deleted successfully"}
