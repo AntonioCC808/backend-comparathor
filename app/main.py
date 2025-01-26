@@ -4,9 +4,13 @@ import uvicorn
 from dotenv import load_dotenv
 
 from app.database import init_db
+from app.events import on_start
+from app.utils import get_logger
 
 # Load environment variables from .env file
 load_dotenv()
+
+logger = get_logger(__name__)
 
 
 def run_app():
@@ -23,7 +27,9 @@ def run_app():
     """
     db_url = os.getenv("DB_URL", "sqlite:///./test.db")
     init_db(db_url)
-    print(f"Using database: {db_url}")
+    logger.info("Initializing data, this may take a few seconds...")
+    on_start()
+    logger.info("Initialization complete, starting server...")
 
 
 if __name__ == "__main__":
