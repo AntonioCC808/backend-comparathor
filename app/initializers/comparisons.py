@@ -1,7 +1,7 @@
 from typing import List
 import yaml
 from pkg_resources import resource_filename
-from app.database import SessionLocal
+from app.database import get_db
 from app.models.comparison import Comparison
 from app.utils import get_logger
 
@@ -24,26 +24,27 @@ def _init_comparisons(comparisons: List[dict]):
     """
     logger.info("Initializing comparisons...")
 
-    with SessionLocal() as session:
-        init_comparisons = [
-            Comparison(
-                id=comparison["id"],
-                id_user=comparison["id_user"],
-                title=comparison["title"],
-                description=comparison["description"],
-                date_created=comparison["date_created"],
-            )
-            for comparison in comparisons
-        ]
+    # Use get_db to get a session
+    session = next(get_db())
+    init_comparisons = [
+        Comparison(
+            id=comparison["id"],
+            id_user=comparison["id_user"],
+            title=comparison["title"],
+            description=comparison["description"],
+            date_created=comparison["date_created"],
+        )
+        for comparison in comparisons
+    ]
 
-        for comparison in init_comparisons:
-            if session.query(Comparison).filter(Comparison.id == comparison.id).first():
-                logger.debug(f"Skipping comparison {comparison.id} as it already exists")
-                continue
-            session.add(comparison)
+    for comparison in init_comparisons:
+        if session.query(Comparison).filter(Comparison.id == comparison.id).first():
+            logger.debug(f"Skipping comparison {comparison.id} as it already exists")
+            continue
+        session.add(comparison)
 
-        session.commit()
-        logger.info("Comparisons initialized")
+    session.commit()
+    logger.info("Comparisons initialized")
 
 
 def load():
