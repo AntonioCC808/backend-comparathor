@@ -12,6 +12,14 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
+class ProductUpdate(BaseModel):
+    name: str
+    brand: str
+    score: float
+    id_user: int
+    id: int = None
+    id_product_type: int = None
+
 
 class ProductDTO(ProductBase):
     id: int

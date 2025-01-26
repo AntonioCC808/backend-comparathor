@@ -2,11 +2,16 @@ product_types:
   - id: 1
     name: "Electronics"
     description: "Electronic devices"
-    metadata_schema: '{"warranty": "integer", "brand": "string"}'
+    metadata_schema:
+      warranty: "integer"
+      brand: "string"
   - id: 2
     name: "Clothing"
     description: "Apparel"
-    metadata_schema: '{"size": "string", "color": "string"}'
+    metadata_schema:
+      size: "string"
+      color: "string"
+
 
 products:
   - id: 1

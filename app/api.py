@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter
 
 from app.middlewares.cors import add_cors
-from app.routes import auth, products, comparisons
+from app.routes import auth, products, comparisons, products_types
 
 # Initialize FastAPI
 app = FastAPI(
@@ -22,6 +22,7 @@ api_router = APIRouter(
 # Include routers
 api_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
 api_router.include_router(products.router, prefix="/products", tags=["Products"])
+api_router.include_router(products_types.router, prefix="/product-types", tags=["Product Types"])
 api_router.include_router(
     comparisons.router, prefix="/comparisons", tags=["Comparisons"]
 )

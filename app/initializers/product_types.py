@@ -1,3 +1,5 @@
+import json
+
 import yaml
 from pkg_resources import resource_filename
 from app.database import get_db
@@ -17,7 +19,9 @@ def _init_product_types(product_types: list):
             id=product_type["id"],
             name=product_type["name"],
             description=product_type["description"],
-            metadata_schema=product_type["metadata_schema"],
+            metadata_schema=json.loads(product_type["metadata_schema"])
+            if isinstance(product_type["metadata_schema"], str)
+            else product_type["metadata_schema"],
         )
         for product_type in product_types
     ]
