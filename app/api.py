@@ -1,4 +1,6 @@
 from fastapi import FastAPI, APIRouter
+
+from app.middlewares.cors import add_cors
 from app.routes import auth, products, comparisons
 
 # Initialize FastAPI
@@ -9,6 +11,8 @@ app = FastAPI(
     description="Application 'Comparathor' for managing products, comparisons, "
     "and metadata.",
 )
+
+add_cors(app)
 
 # Create API Router
 api_router = APIRouter(
