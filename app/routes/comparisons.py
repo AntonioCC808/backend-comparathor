@@ -31,16 +31,7 @@ def get_comparisons(
         A list of comparison records.
     """
     comparisons = db.query(Comparison).offset(skip).limit(limit).all()
-    return [
-        ComparisonDTO(
-            title=comparison.title,
-            description=comparison.description,
-            date_created=comparison.date_created,
-            id_user=comparison.id_user,
-            id=comparison.id,
-        )
-        for comparison in comparisons
-    ]
+    return [ComparisonDTO.model_validate(comparison) for comparison in comparisons]
 
 
 @router.post("/", response_model=ComparisonDTO)
@@ -66,13 +57,7 @@ def create_comparison(
     db.add(new_comparison)
     db.commit()
     db.refresh(new_comparison)
-    return ComparisonDTO(
-        title=new_comparison.title,
-        description=new_comparison.description,
-        id=new_comparison.id,
-        id_user=new_comparison.id_user,
-        date_created=new_comparison.date_created,
-    )
+    return ComparisonDTO.model_validate(new_comparison)
 
 
 @router.get("/{comparison_id}", response_model=ComparisonDTO)
@@ -97,13 +82,7 @@ def get_comparison(
     comparison = db.query(Comparison).filter(Comparison.id == comparison_id).first()
     if not comparison:
         raise HTTPException(status_code=404, detail="Comparison not found")
-    return ComparisonDTO(
-        title=comparison.title,
-        description=comparison.description,
-        date_created=comparison.date_created,
-        id_user=comparison.id_user,
-        id=comparison.id,
-    )
+    return ComparisonDTO.model_validate(comparison)
 
 
 @router.delete("/{comparison_id}", response_model=dict)

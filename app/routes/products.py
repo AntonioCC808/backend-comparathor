@@ -2,8 +2,8 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.models.product import Product
-from app.schemas.product import ProductCreate, ProductDTO
+from app.models.product import Product, ProductType
+from app.schemas.product import ProductCreate, ProductDTO, ProductTypeDTO
 from app.database import get_db
 
 router = APIRouter()
@@ -31,16 +31,7 @@ def get_products(
         A list of product records.
     """
     products = db.query(Product).offset(skip).limit(limit).all()
-    return [
-        ProductDTO(
-            name=product.name,
-            brand=product.brand,
-            score=product.score,
-            id=product.id,
-            id_user=product.id_user,
-        )
-        for product in products
-    ]
+    return [ProductDTO.model_validate(product)for product in products]
 
 
 @router.post("/", response_model=ProductDTO)
@@ -64,13 +55,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> Pro
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
-    return ProductDTO(
-        name=new_product.name,
-        brand=new_product.brand,
-        score=new_product.score,
-        id=new_product.id,
-        id_user=new_product.id_user,
-    )
+    return ProductDTO.model_validate(new_product)
 
 
 @router.put("/{product_id}", response_model=ProductDTO)
@@ -106,13 +91,7 @@ def update_product(
         setattr(db_product, key, value)
     db.commit()
     db.refresh(db_product)
-    return ProductDTO(
-        name=db_product.name,
-        brand=db_product.brand,
-        score=db_product.score,
-        id=db_product.id,
-        id_user=db_product.id_user,
-    )
+    return ProductDTO.model_validate(product)
 
 
 @router.delete("/{product_id}")
@@ -169,10 +148,23 @@ def get_product(product_id: int, db: Session = Depends(get_db)) -> ProductDTO:
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    return ProductDTO(
-        name=product.name,
-        brand=product.brand,
-        score=product.score,
-        id=product.id,
-        id_user=product.id_user,
-    )
+    return ProductDTO.model_validate(product)
+
+
+@router.get("/product-types", response_model=List[ProductTypeDTO])
+def get_product_types(db: Session = Depends(get_db)) -> List[ProductTypeDTO]:
+    """
+    Retrieve a list of all product types.
+
+    Parameters
+    ----------
+    db : Session
+        The database session dependency.
+
+    Returns
+    -------
+    list[ProductTypeDTO]
+        A list of all product types.
+    """
+    product_types = db.query(ProductType).all()
+    return [ProductTypeDTO.model_validate(product_type) for product_type in product_types]

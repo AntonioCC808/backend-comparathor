@@ -17,3 +17,13 @@ class ProductDTO(ProductBase):
 
     class Config:
         from_attributes = True
+
+
+class ProductTypeDTO(BaseModel):
+    id: int
+    name: str
+    description: str
+    metadata_schema: dict
+
+    class Config:
+        from_attributes = True

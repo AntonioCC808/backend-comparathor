@@ -39,7 +39,7 @@ def register(user: UserBase, db: Session = Depends(get_db)) -> UserDTO:
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return UserDTO(user_id=new_user.user_id, email=new_user.email, role=new_user.role)
+    return UserDTO.model_validate(new_user)
 
 
 @router.post("/login")
