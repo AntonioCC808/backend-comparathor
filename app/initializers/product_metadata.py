@@ -2,7 +2,7 @@ import yaml
 from pkg_resources import resource_filename
 from app.database import SessionLocal
 from app.models.product import ProductMetadata
-from app.utils.logger import get_logger
+from app.utils import get_logger
 
 logger = get_logger("PRODUCT-METADATA-INITIALIZER")
 

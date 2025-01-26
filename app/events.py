@@ -19,12 +19,7 @@ def on_start():
     Returns
     -------
     None
-    """
-    try:
-        # Attempt to initialize all components
-        initialize_all()
-        # Log a success message if initialization is successful
-        logger.info("Application initialized successfully.")
-    except Exception as e:
-        # Log an error message if initialization fails
-        logger.info(f"An error occurred during initialization: {e}")
+"""
+    initialize_all()
+    # Log a success message if initialization is successful
+    logger.info("Application initialized successfully.")
