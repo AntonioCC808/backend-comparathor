@@ -2,12 +2,11 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.models.comparison import Comparison
+from app.models.comparison import Comparison, ComparisonProduct
 from app.schemas.comparison import ComparisonDTO, ComparisonBase
 from app.database import get_db
 
 router = APIRouter()
-
 
 @router.get("/", response_model=list[ComparisonDTO])
 def get_comparisons(
@@ -53,8 +52,17 @@ def create_comparison(
     ComparisonDTO
         The newly created comparison record.
     """
+    # Create a new Comparison instance
     new_comparison = Comparison(**comparison.model_dump())
     db.add(new_comparison)
+
+    # Add associated products (if any)
+    for product_id in comparison.products:
+        comparison_product = ComparisonProduct(
+            comparison_id=new_comparison.id, product_id=product_id
+        )
+        db.add(comparison_product)
+
     db.commit()
     db.refresh(new_comparison)
     return ComparisonDTO.model_validate(new_comparison)

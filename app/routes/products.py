@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.models.product import Product
+from app.models.product import Product, ProductMetadata
 from app.schemas.product import ProductCreate, ProductDTO, ProductUpdate
 from app.database import get_db
 
@@ -53,6 +53,19 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> Pro
     """
     new_product = Product(**product.model_dump())
     db.add(new_product)
+
+    db.flush()  # Get the ID of the newly created product
+
+    # Add metadata
+    for meta in product.product_metadata or []:
+        new_metadata = ProductMetadata(
+            id_product=new_product.id,
+            attribute=meta.attribute,
+            value=meta.value,
+            score=meta.score,
+        )
+        db.add(new_metadata)
+
     db.commit()
     db.refresh(new_product)
     return ProductDTO.model_validate(new_product)
@@ -87,14 +100,31 @@ def update_product(
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
+    # Update product details
     for key, value in product.model_dump().items():
-        if value:
+        if key != "product_metadata" and value is not None:
             setattr(db_product, key, value)
+
+    # Update metadata
+    for meta in product.product_metadata or []:
+        if meta.id:
+            db_metadata = db.query(ProductMetadata).filter(ProductMetadata.id == meta.id).first()
+            if db_metadata:
+                for key, value in meta.model_dump().items():
+                    if value is not None:
+                        setattr(db_metadata, key, value)
+        else:
+            new_metadata = ProductMetadata(
+                id_product=product_id,
+                attribute=meta.attribute,
+                value=meta.value,
+                score=meta.score,
+            )
+            db.add(new_metadata)
+
     db.commit()
     db.refresh(db_product)
-    product.id = db_product.id
-    product.id_product_type = db_product.id_product_type
-    return ProductDTO.model_validate(product)
+    return ProductDTO.model_validate(db_product)
 
 
 @router.delete("/{product_id}")

@@ -11,7 +11,12 @@ class Comparison(Base):
     description: Mapped[str] = Column(String)
     date_created: Mapped[str] = Column(String)
     user = relationship("User", back_populates="comparisons")
-    products = relationship("ComparisonProduct", back_populates="comparison")
+    # Relationship to ComparisonProduct with cascade delete
+    products = relationship(
+        "ComparisonProduct",
+        back_populates="comparison",
+        cascade="all, delete-orphan"
+    )
 
 
 class ComparisonProduct(Base):
@@ -20,3 +25,4 @@ class ComparisonProduct(Base):
     comparison_id: Mapped[int] = Column(Integer, ForeignKey("comparisons.id"))
     product_id: Mapped[int] = Column(Integer, ForeignKey("products.id"))
     comparison = relationship("Comparison", back_populates="products")
+    product = relationship("Product")

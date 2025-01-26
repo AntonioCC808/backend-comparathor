@@ -1,4 +1,15 @@
+from typing import List
+
 from pydantic import BaseModel
+
+class ProductMetadataDTO(BaseModel):
+    id: int
+    attribute: str
+    value: str
+    score: float
+
+    class Config:
+        from_attributes = True
 
 
 class ProductBase(BaseModel):
@@ -7,6 +18,7 @@ class ProductBase(BaseModel):
     score: float
     id_user: int
     id_product_type: int
+    product_metadata: List[ProductMetadataDTO]
 
 
 class ProductCreate(ProductBase):
@@ -19,6 +31,7 @@ class ProductUpdate(BaseModel):
     id_user: int
     id: int = None
     id_product_type: int = None
+    product_metadata: List[ProductMetadataDTO]
 
 
 class ProductDTO(ProductBase):
@@ -26,7 +39,6 @@ class ProductDTO(ProductBase):
 
     class Config:
         from_attributes = True
-
 
 class ProductTypeDTO(BaseModel):
     id: int
