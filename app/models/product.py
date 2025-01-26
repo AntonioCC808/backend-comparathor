@@ -23,7 +23,12 @@ class Product(Base):
     score = Column(Float)
     user = relationship("User", back_populates="products")
     product_type = relationship("ProductType", back_populates="products")
-    product_metadata = relationship("ProductMetadata", back_populates="product")
+    # One-to-Many relationship with ProductMetadata
+    product_metadata = relationship(
+        "ProductMetadata",
+        back_populates="product",
+        cascade="all, delete-orphan"
+    )
 
 
 class ProductMetadata(Base):
@@ -33,4 +38,4 @@ class ProductMetadata(Base):
     attribute = Column(String)
     value = Column(String)
     score = Column(Float)
-    product = relationship("Product", back_populates="product_metadata",  cascade="all, delete-orphan")
+    product = relationship("Product", back_populates="product_metadata")
