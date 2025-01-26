@@ -6,6 +6,7 @@ class ProductBase(BaseModel):
     brand: str
     score: float
     id_user: int
+    id_product_type: int
 
 
 class ProductCreate(ProductBase):
