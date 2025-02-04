@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.schemas.user import UserBase, UserDTO
+from app.schemas.user import UserBase, UserDTO, UserRegister
 from app.models.user import User
 from app.database import get_db
 from app.utils import hash_password, verify_password, create_access_token
@@ -9,13 +9,13 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=UserDTO)
-def register(user: UserBase, db: Session = Depends(get_db)) -> UserDTO:
+def register(user: UserRegister, db: Session = Depends(get_db)) -> UserDTO:
     """
     Register a new user.
 
     Parameters
     ----------
-    user : UserBase
+    user : UserRegister
         The user details including email and password.
     db : Session
         The database session dependency.
