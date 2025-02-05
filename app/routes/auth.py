@@ -30,15 +30,26 @@ def register(user: UserRegister, db: Session = Depends(get_db)) -> UserDTO:
     HTTPException
         If the email is already registered.
     """
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
+    # Check if user_id already exists
+    if db.query(User).filter(User.user_id == user.user_id).first():
+        raise HTTPException(status_code=400, detail="User ID already exists. Please choose another.")
+
+    # Check if email is already registered
+    if db.query(User).filter(User.email == user.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
+
+    # Create new user
     new_user = User(
-        email=user.email, password=hash_password(user.password), role=user.role
+        user_id=user.user_id,  # Ensure user_id is included
+        email=user.email,
+        password=hash_password(user.password),
+        role=user.role
     )
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
     return UserDTO.model_validate(new_user)
 
 
