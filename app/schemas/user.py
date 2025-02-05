@@ -9,7 +9,7 @@ class UserBase(BaseModel):
     user_id: str
 
 class UserRegister(UserBase):
-    role: Optional[str] = "user"  # Default role is 'user'
+    role: str
 
 
 class UserDTO(BaseModel):
