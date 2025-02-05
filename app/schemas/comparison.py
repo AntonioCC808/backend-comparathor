@@ -4,14 +4,6 @@ from pydantic import BaseModel
 
 from app.schemas.product import ProductDTO
 
-class ComparisonBase(BaseModel):
-    title: str
-    description: str
-    id_user: int
-    date_created: str
-    products: List[int]
-
-
 class ComparisonProductDTO(BaseModel):
     id: int
     comparison_id: int
@@ -20,6 +12,16 @@ class ComparisonProductDTO(BaseModel):
     class Config:
         from_attributes = True
 
+
+class ComparisonBase(BaseModel):
+    title: str
+    description: str
+    id_user: int
+    date_created: str
+    products: List[ComparisonProductDTO]
+
+    class Config:
+        from_attributes = True
 
 class ComparisonDTO(ComparisonBase):
     id: int
