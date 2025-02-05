@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr
 class UserBase(BaseModel):
     email: EmailStr
     password: str
-    user_id: str
+    user_id: Optional[str] = None
 
 class UserRegister(UserBase):
     role: str
