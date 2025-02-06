@@ -19,3 +19,11 @@ class UserDTO(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserUpdate(BaseModel):
+    """
+    Schema for updating user settings.
+    """
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
