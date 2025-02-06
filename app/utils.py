@@ -1,9 +1,21 @@
+import logging
+import os
+from pathlib import Path
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from jose import jwt
+from jose import jwt, JWTError
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.models.user import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def hash_password(password: str) -> str:
@@ -61,9 +73,54 @@ def create_access_token(data: dict) -> str:
     return encoded_jwt
 
 
-import logging
-import os
-from pathlib import Path
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """
+    Retrieve the currently authenticated user from a JWT token.
+
+    This function decodes the provided JWT token, verifies its validity,
+    extracts the user's email, and retrieves the corresponding user from
+    the database. If authentication fails at any step, an HTTP 401
+    Unauthorized exception is raised.
+
+    Parameters
+    ----------
+    token : str
+        The JWT token provided by the client for authentication.
+    db : Session
+        SQLAlchemy database session dependency.
+
+    Returns
+    -------
+    User
+        The authenticated user object retrieved from the database.
+
+    Raises
+    ------
+    HTTPException
+        If the authentication credentials are invalid or the user does not exist.
+    """
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid authentication credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        # Decode JWT token and extract user email
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_email = payload.get("sub")
+        if user_email is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    # Query database for user
+    user = db.query(User).filter(User.email == user_email).first()
+    if user is None:
+        raise credentials_exception
+
+    return user
+
 
 
 def get_logger(
