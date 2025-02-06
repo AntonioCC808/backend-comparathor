@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserBase(BaseModel):
@@ -26,4 +26,4 @@ class UserUpdate(BaseModel):
     """
     email: Optional[EmailStr] = None
     username: Optional[str] = None
-    password: Optional[str] = None
+    password: Optional[str] = Field(None, min_length=6)  # Allow password updates
