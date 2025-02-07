@@ -17,13 +17,12 @@ class Product(Base):
     id = Column(Integer, primary_key=True, index=True)
     id_product_type = Column(Integer, ForeignKey("product_types.id"))
     id_user = Column(Integer, ForeignKey("users.user_id"))
-    product_type_id: Mapped[int] = Column(Integer, ForeignKey("product_types.id"))
     name = Column(String)
     image_base64 = Column(String)
     brand = Column(String)
     score = Column(Float)
     user = relationship("User", back_populates="products")
-    product_type = relationship("ProductType", back_populates="comparisons")
+    product_type = relationship("ProductType", back_populates="products")
     # One-to-Many relationship with ProductMetadata
     product_metadata = relationship(
         "ProductMetadata",

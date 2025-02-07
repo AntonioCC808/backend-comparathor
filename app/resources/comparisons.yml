@@ -4,11 +4,13 @@ comparisons:
     title: "Comparison of Smartphones"
     description: "Comparing smartphones based on features"
     date_created: "2025-01-01"
+    product_type_id: 1
   - id: 2
     id_user: 2
     title: "T-Shirts Comparison"
     description: "Comparing t-shirts based on size and comfort"
     date_created: "2025-01-02"
+    product_type_id: 1
 
 comparison_products:
   - id: 1
