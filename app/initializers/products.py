@@ -52,7 +52,7 @@ def _init_products(products: List[dict], product_types: List[dict]):
             id_product_type=product["id_product_type"],
             id_user=product["id_user"],
             name=product["name"],
-            image=product["image"],
+            image_base64=product["image"],
             brand=product["brand"],
             score=product["score"],
         )

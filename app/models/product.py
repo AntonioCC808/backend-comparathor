@@ -18,7 +18,7 @@ class Product(Base):
     id_product_type = Column(Integer, ForeignKey("product_types.id"))
     id_user = Column(Integer, ForeignKey("users.user_id"))
     name = Column(String)
-    image = Column(String)
+    image_base64 = Column(String)
     brand = Column(String)
     score = Column(Float)
     user = relationship("User", back_populates="products")
