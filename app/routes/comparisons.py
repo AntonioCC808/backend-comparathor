@@ -1,6 +1,5 @@
-from typing import List
-
-from fastapi import APIRouter, Depends, HTTPException
+from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.models.comparison import Comparison, ComparisonProduct
 from app.schemas.comparison import ComparisonDTO, ComparisonBase
@@ -8,12 +7,14 @@ from app.database import get_db
 
 router = APIRouter()
 
-@router.get("/", response_model=list[ComparisonDTO])
+@router.get("/", response_model=List[ComparisonDTO])
 def get_comparisons(
-    skip: int = 0, limit: int = 10, db: Session = Depends(get_db)
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db)
 ) -> List[ComparisonDTO]:
     """
-    Retrieve a list of comparisons.
+    Retrieve a list of comparisons, optionally filtered by product type.
 
     Parameters
     ----------
@@ -29,7 +30,9 @@ def get_comparisons(
     list[ComparisonDTO]
         A list of comparison records.
     """
-    comparisons = db.query(Comparison).offset(skip).limit(limit).all()
+    query = db.query(Comparison)
+
+    comparisons = query.offset(skip).limit(limit).all()
     return [ComparisonDTO.model_validate(comparison) for comparison in comparisons]
 
 
@@ -55,11 +58,13 @@ def create_comparison(
     # Create a new Comparison instance
     new_comparison = Comparison(**comparison.model_dump())
     db.add(new_comparison)
+    db.flush()  # Get comparison ID before adding products
 
     # Add associated products (if any)
     for product_id in comparison.products:
         comparison_product = ComparisonProduct(
-            comparison_id=new_comparison.id, product_id=product_id
+            comparison_id=new_comparison.id,
+            product_id=product_id,
         )
         db.add(comparison_product)
 
