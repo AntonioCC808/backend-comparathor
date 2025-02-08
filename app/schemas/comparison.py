@@ -6,8 +6,7 @@ from app.schemas.product import ProductDTO
 class ComparisonProductDTO(BaseModel):
     id: int
     comparison_id: int
-    product: ProductDTO  # Include full product details
-    product_type_id: int
+    product: ProductDTO
 
     class Config:
         from_attributes = True

@@ -33,6 +33,7 @@ def _init_comparisons(comparisons: List[dict]):
             title=comparison["title"],
             description=comparison["description"],
             date_created=comparison["date_created"],
+            product_type_id=comparison["product_type_id"],
         )
         for comparison in comparisons
     ]

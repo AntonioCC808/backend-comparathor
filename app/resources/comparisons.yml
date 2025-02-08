@@ -19,3 +19,9 @@ comparison_products:
   - id: 2
     comparison_id: 2
     product_id: 2
+  - id: 3
+    comparison_id: 1
+    product_id: 3
+  - id: 4
+    comparison_id: 2
+    product_id: 4

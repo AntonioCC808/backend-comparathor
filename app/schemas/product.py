@@ -31,7 +31,7 @@ class ProductUpdate(BaseModel):
     score: float
     id_user: int
     id: int = None
-    id_product_type: int = None
+    product_type_id: int = None
     image_base64: str = None  # ✅ Make it optional in case of updates
     product_metadata: List[ProductMetadataDTO]
 
