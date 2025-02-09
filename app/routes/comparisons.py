@@ -42,35 +42,30 @@ def create_comparison(
 ) -> ComparisonDTO:
     """
     Create a new comparison record.
-
-    Parameters
-    ----------
-    comparison : ComparisonBase
-        The details of the comparison to be created.
-    db : Session
-        The database session dependency.
-
-    Returns
-    -------
-    ComparisonDTO
-        The newly created comparison record.
     """
-    # Create a new Comparison instance
-    new_comparison = Comparison(**comparison.model_dump())
+    # ✅ Exclude `products` from direct mapping to avoid AttributeError
+    new_comparison = Comparison(
+        title=comparison.title,
+        description=comparison.description,
+        id_user=comparison.id_user,
+        date_created=comparison.date_created,
+        product_type_id=comparison.product_type_id
+    )
     db.add(new_comparison)
-    db.flush()  # Get comparison ID before adding products
+    db.flush()  # Ensure new_comparison.id is available before adding products
 
-    # Add associated products (if any)
-    for product_id in comparison.products:
-        comparison_product = ComparisonProduct(
-            comparison_id=new_comparison.id,
-            product_id=product_id,
-        )
-        db.add(comparison_product)
+    # ✅ Ensure `ComparisonProduct` objects are created correctly
+    comparison_products = [
+        ComparisonProduct(comparison_id=new_comparison.id, product_id=product_id)
+        for product_id in comparison.products  # This was previously a list of integers
+    ]
+    db.add_all(comparison_products)
 
     db.commit()
     db.refresh(new_comparison)
+
     return ComparisonDTO.model_validate(new_comparison)
+
 
 
 @router.get("/{comparison_id}", response_model=ComparisonDTO)
