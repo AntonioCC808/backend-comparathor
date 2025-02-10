@@ -47,7 +47,7 @@ def create_comparison(
     new_comparison = Comparison(
         title=comparison.title,
         description=comparison.description,
-        id_user=comparison.id_user,
+        user_id=comparison.user_id,
         date_created=comparison.date_created,
         product_type_id=comparison.product_type_id
     )

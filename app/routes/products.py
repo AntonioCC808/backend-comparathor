@@ -26,7 +26,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> Pro
         name=product.name,
         brand=product.brand,
         score=product.score,
-        id_user=product.id_user,
+        user_id=product.user_id,
         product_type_id=product.product_type_id,
         image_base64=product.image_base64,  # ✅ Save image in Base64 format
     )
