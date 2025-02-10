@@ -28,8 +28,6 @@ class ProductUpdate(BaseModel):
     name: str
     brand: str
     score: float
-    user_id: str
-    product_type_id: int
     image_base64: str
     product_metadata: List[ProductMetadataDTO]
 

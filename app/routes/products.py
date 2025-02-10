@@ -60,26 +60,16 @@ def update_product(product_id: int, product: ProductUpdate, db: Session = Depend
 
     # Update product details including the Base64 image
     for key, value in product.model_dump().items():
-        if key != "product_metadata" and value is not None:
+        if key not in ["product_metadata", "user_id", "product_type_id"] and value is not None:
             setattr(db_product, key, value)
 
     # Update or add metadata attributes
     for meta in product.product_metadata or []:
-        if meta.product_id:
-            db_metadata = db.query(ProductMetadata).filter(ProductMetadata.id == meta.product_id).first()
-            if db_metadata:
-                for key, value in meta.model_dump().items():
-                    if value is not None:
-                        setattr(db_metadata, key, value)
-        else:
-            new_metadata = ProductMetadata(
-                product_id=product_id,
-                attribute=meta.attribute,
-                value=meta.value,
-                score=meta.score,
-            )
-            db.add(new_metadata)
-
+        db_metadata = db.query(ProductMetadata).filter(ProductMetadata.attribute == meta.attribute).first()
+        if db_metadata:
+            for key, value in meta.model_dump().items():
+                if value is not None:
+                    setattr(db_metadata, key, value)
     db.commit()
     db.refresh(db_product)
     return ProductDTO.model_validate(db_product)
