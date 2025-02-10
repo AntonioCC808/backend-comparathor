@@ -14,7 +14,7 @@ class ProductBase(BaseModel):
     name: str
     brand: str
     score: float
-    user_id: int
+    user_id: str
     product_type_id: int
     image_base64: str  #  Added field for Base64 encoded image
     product_metadata: List[ProductMetadataDTO]
@@ -28,7 +28,7 @@ class ProductUpdate(BaseModel):
     name: str
     brand: str
     score: float
-    id_user: int
+    user_id: str
     id: int = None
     product_type_id: int = None
     image_base64: str = None  # ✅ Make it optional in case of updates

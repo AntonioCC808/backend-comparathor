@@ -15,7 +15,7 @@ class ComparisonProductDTO(BaseModel):
 class ComparisonBase(BaseModel):
     title: str
     description: str
-    user_id: int
+    user_id: str
     date_created: str
     product_type_id: int
     products: List[int]

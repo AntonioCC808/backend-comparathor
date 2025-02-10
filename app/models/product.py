@@ -16,7 +16,7 @@ class Product(Base):
     __tablename__ = "products"
     id = Column(Integer, primary_key=True, index=True)
     product_type_id = Column(Integer, ForeignKey("product_types.id"))
-    user_id = Column(Integer, ForeignKey("users.user_id"))
+    user_id = Column(String, ForeignKey("users.user_id"))
     name = Column(String)
     image_base64 = Column(String)
     brand = Column(String)

@@ -6,7 +6,7 @@ from app.database import Base
 class Comparison(Base):
     __tablename__ = "comparisons"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"))
+    user_id = Column(String, ForeignKey("users.user_id"))
     title = Column(String(256))
     description = Column(String)
     date_created = Column(String)
