@@ -27,7 +27,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> Pro
         brand=product.brand,
         score=product.score,
         id_user=product.id_user,
-        id_product_type=product.id_product_type,
+        product_type_id=product.product_type_id,
         image_base64=product.image_base64,  # ✅ Save image in Base64 format
     )
 
@@ -37,7 +37,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> Pro
     # Add metadata attributes
     for meta in product.product_metadata or []:
         new_metadata = ProductMetadata(
-            id_product=new_product.id,
+            product_id=new_product.id,
             attribute=meta.attribute,
             value=meta.value,
             score=meta.score,
@@ -73,7 +73,7 @@ def update_product(product_id: int, product: ProductUpdate, db: Session = Depend
                         setattr(db_metadata, key, value)
         else:
             new_metadata = ProductMetadata(
-                id_product=product_id,
+                product_id=product_id,
                 attribute=meta.attribute,
                 value=meta.value,
                 score=meta.score,

@@ -16,7 +16,7 @@ class ProductBase(BaseModel):
     brand: str
     score: float
     id_user: int
-    id_product_type: int
+    product_type_id: int
     image_base64: str  #  Added field for Base64 encoded image
     product_metadata: List[ProductMetadataDTO]
 
