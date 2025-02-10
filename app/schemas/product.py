@@ -2,7 +2,7 @@ from typing import List
 from pydantic import BaseModel
 
 class ProductMetadataDTO(BaseModel):
-    id: int
+    product_id: int
     attribute: str
     value: str
     score: float
@@ -17,7 +17,7 @@ class ProductBase(BaseModel):
     score: float
     id_user: int
     id_product_type: int
-    image_base64: str  # ✅ Added field for Base64 encoded image
+    image_base64: str  #  Added field for Base64 encoded image
     product_metadata: List[ProductMetadataDTO]
 
 

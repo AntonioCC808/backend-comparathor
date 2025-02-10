@@ -65,8 +65,8 @@ def update_product(product_id: int, product: ProductUpdate, db: Session = Depend
 
     # Update or add metadata attributes
     for meta in product.product_metadata or []:
-        if meta.id:
-            db_metadata = db.query(ProductMetadata).filter(ProductMetadata.id == meta.id).first()
+        if meta.product_id:
+            db_metadata = db.query(ProductMetadata).filter(ProductMetadata.id == meta.product_id).first()
             if db_metadata:
                 for key, value in meta.model_dump().items():
                     if value is not None:

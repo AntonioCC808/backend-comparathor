@@ -15,28 +15,28 @@ product_types:
 
 products:
   - id: 1
-    id_product_type: 1
+    product_type_id: 1
     id_user: 1
     name: "Smartphone"
     image: "smartphone.png"
     brand: "BrandX"
     score: 4.5
   - id: 2
-    id_product_type: 2
+    product_type_id: 2
     id_user: 1
     name: "T-Shirt"
     image: "tshirt.png"
     brand: "BrandY"
     score: 4.0
   - id: 3
-    id_product_type: 1
+    product_type_id: 1
     id_user: 1
     name: "Smartphone 2"
     image: "smartphone.png"
     brand: "BrandX"
     score: 4.3
   - id: 4
-    id_product_type: 2
+    product_type_id: 2
     id_user: 1
     name: "T-Shirt 2"
     image: "tshirt.png"
@@ -46,22 +46,22 @@ products:
 
 product_metadata:
   - id: 1
-    id_product: 1
+    product_id: 1
     attribute: "warranty"
     value: "24"
     score: 4.8
   - id: 2
-    id_product: 2
+    product_id: 2
     attribute: "size"
     value: "L"
     score: 4.2
   - id: 3
-    id_product: 3
+    product_id: 3
     attribute: "warranty"
     value: "20"
     score: 4.4
   - id: 4
-    id_product: 4
+    product_id: 4
     attribute: "size"
     value: "M"
     score: 4.3

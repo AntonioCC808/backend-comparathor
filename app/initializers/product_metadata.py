@@ -15,7 +15,7 @@ def _init_product_metadata(metadata: list):
     init_metadata = [
         ProductMetadata(
             id=meta["id"],
-            id_product=meta["id_product"],
+            product_id=meta["product_id"],
             attribute=meta["attribute"],
             value=meta["value"],
             score=meta["score"],

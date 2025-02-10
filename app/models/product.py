@@ -34,7 +34,7 @@ class Product(Base):
 class ProductMetadata(Base):
     __tablename__ = "product_metadata"
     id = Column(Integer, primary_key=True, index=True)
-    id_product = Column(Integer, ForeignKey("products.id"))
+    product_id = Column(Integer, ForeignKey("products.id"))
     attribute = Column(String)
     value = Column(String)
     score = Column(Float)
