@@ -2,7 +2,6 @@ from typing import List
 from pydantic import BaseModel
 
 class ProductMetadataDTO(BaseModel):
-    product_id: int
     attribute: str
     value: str
     score: float
