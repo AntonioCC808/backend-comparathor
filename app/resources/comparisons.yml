@@ -1,12 +1,12 @@
 comparisons:
   - id: 1
-    id_user: 1
+    user_id: 1
     title: "Comparison of Smartphones"
     description: "Comparing smartphones based on features"
     date_created: "2025-01-01"
     product_type_id: 1
   - id: 2
-    id_user: 2
+    user_id: 2
     title: "T-Shirts Comparison"
     description: "Comparing t-shirts based on size and comfort"
     date_created: "2025-01-02"

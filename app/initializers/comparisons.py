@@ -29,7 +29,7 @@ def _init_comparisons(comparisons: List[dict]):
     init_comparisons = [
         Comparison(
             id=comparison["id"],
-            id_user=comparison["id_user"],
+            user_id=comparison["user_id"],
             title=comparison["title"],
             description=comparison["description"],
             date_created=comparison["date_created"],
