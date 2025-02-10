@@ -29,8 +29,8 @@ class ProductUpdate(BaseModel):
     brand: str
     score: float
     user_id: str
-    product_type_id: int = None
-    image_base64: str = None  # ✅ Make it optional in case of updates
+    product_type_id: int
+    image_base64: str
     product_metadata: List[ProductMetadataDTO]
 
 
