@@ -30,9 +30,6 @@ def get_product(product_id: int, db: Session = Depends(get_db)) -> ProductDTO:
     return ProductDTO.model_validate(product)
 
 
-router = APIRouter()
-
-
 @router.post("/", response_model=ProductDTO)
 def create_product(
     product: ProductCreate,
