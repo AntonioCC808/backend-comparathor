@@ -15,7 +15,6 @@ class ComparisonProductDTO(BaseModel):
 class ComparisonBase(BaseModel):
     title: str
     description: str
-    user_id: Optional[str] = None  # ✅ Allow None for unregistered users
     date_created: str
     product_type_id: int
     products: List[int]
