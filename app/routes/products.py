@@ -5,6 +5,7 @@ from app.models.product import Product, ProductMetadata
 from app.models.user import User
 from app.schemas.product import ProductCreate, ProductDTO, ProductUpdate
 from app.database import get_db
+from app.utils import get_current_user
 
 router = APIRouter()
 
@@ -29,14 +30,6 @@ def get_product(product_id: int, db: Session = Depends(get_db)) -> ProductDTO:
     return ProductDTO.model_validate(product)
 
 
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from app.models.product import Product, ProductMetadata
-from app.schemas.product import ProductCreate, ProductDTO, ProductUpdate
-from app.database import get_db
-from app.auth import get_current_user  # ✅ Import authentication function
-
 router = APIRouter()
 
 
@@ -53,7 +46,7 @@ def create_product(
         name=product.name,
         brand=product.brand,
         score=product.score,
-        user_id=current_user.id,  # ✅ Use the authenticated user's ID
+        user_id=current_user.user_id,
         product_type_id=product.product_type_id,
         image_base64=product.image_base64,
     )
