@@ -2,8 +2,11 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.models.comparison import Comparison, ComparisonProduct
-from app.schemas.comparison import ComparisonDTO, ComparisonBase
+from app.models.user import User
+from app.schemas.comparison import ComparisonDTO, ComparisonBase, ComparisonProductDTO
 from app.database import get_db
+from app.schemas.product import ProductDTO
+from app.utils import get_current_user
 
 router = APIRouter()
 
@@ -38,26 +41,49 @@ def get_comparisons(
 
 @router.post("/", response_model=ComparisonDTO)
 def create_comparison(
-    comparison: ComparisonBase, db: Session = Depends(get_db)
+        comparison: ComparisonBase,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user),  # ✅ Require authentication
 ) -> ComparisonDTO:
     """
     Create a new comparison record.
+
+    - If the user is registered, save the comparison in the database.
+    - If the user is not registered, return the data **without saving it**.
     """
-    # ✅ Exclude `products` from direct mapping to avoid AttributeError
+
+    # ✅ If the user is not registered, return the DTO without saving
+    if current_user is None:
+        return ComparisonDTO(
+            id=0,  # Temporary ID for frontend use
+            title=comparison.title,
+            description=comparison.description,
+            user_id=None,  # No user ID for unregistered users
+            date_created=comparison.date_created,
+            product_type_id=comparison.product_type_id,
+            products=[
+                ComparisonProductDTO(
+                    product=ProductDTO.model_validate({"id": pid})
+                ) for pid in comparison.products
+            ],
+        )
+
+    # Create new comparison in the database for registered users
     new_comparison = Comparison(
         title=comparison.title,
         description=comparison.description,
-        user_id=comparison.user_id,
+        user_id=current_user.user_id,  # Ensure the user ID is set
         date_created=comparison.date_created,
         product_type_id=comparison.product_type_id
     )
+
     db.add(new_comparison)
     db.flush()  # Ensure new_comparison.id is available before adding products
 
-    # ✅ Ensure `ComparisonProduct` objects are created correctly
+    # ✅ Add linked products
     comparison_products = [
         ComparisonProduct(comparison_id=new_comparison.id, product_id=product_id)
-        for product_id in comparison.products  # This was previously a list of integers
+        for product_id in comparison.products
     ]
     db.add_all(comparison_products)
 
@@ -65,7 +91,6 @@ def create_comparison(
     db.refresh(new_comparison)
 
     return ComparisonDTO.model_validate(new_comparison)
-
 
 
 @router.get("/{comparison_id}", response_model=ComparisonDTO)
@@ -93,12 +118,15 @@ def get_comparison(
     return ComparisonDTO.model_validate(comparison)
 
 
+
 @router.delete("/{comparison_id}", response_model=dict)
 def delete_comparison(
-    comparison_id: int, db: Session = Depends(get_db)
+    comparison_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Require authentication
 ) -> dict:
     """
-    Delete a comparison by ID.
+    Delete a comparison by ID. Only the owner or an admin can delete it.
 
     Parameters
     ----------
@@ -106,6 +134,8 @@ def delete_comparison(
         The ID of the comparison to delete.
     db : Session
         The database session dependency.
+    current_user : User
+        The currently authenticated user.
 
     Returns
     -------
@@ -113,8 +143,14 @@ def delete_comparison(
         A confirmation message.
     """
     comparison = db.query(Comparison).filter(Comparison.id == comparison_id).first()
+
     if not comparison:
         raise HTTPException(status_code=404, detail="Comparison not found")
+
+    # ✅ Ensure only the owner or an admin can delete it
+    if comparison.user_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to delete this comparison")
+
     db.delete(comparison)
     db.commit()
     return {"message": "Comparison deleted successfully"}

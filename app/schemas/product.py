@@ -47,3 +47,11 @@ class ProductTypeDTO(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+class ProductTypeCreateDTO(BaseModel):
+    name: str
+    description: str
+    metadata_schema: dict
+

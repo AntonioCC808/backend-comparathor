@@ -122,6 +122,39 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 
+def get_current_admin_user(current_user: User = Depends(get_current_user)):
+    """
+    Retrieve the currently authenticated administrator user.
+
+    This function ensures that the currently authenticated user has
+    administrative privileges by checking the "role" attribute.
+    If the user is not an administrator, an HTTP 403 Forbidden exception
+    is raised.
+
+    Parameters
+    ----------
+    current_user : User
+        The currently authenticated user object obtained from `get_current_user`.
+
+    Returns
+    -------
+    User
+        The authenticated administrator user object.
+
+    Raises
+    ------
+    HTTPException
+        If the user does not have administrative privileges.
+    """
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions",
+        )
+    return current_user
+
+
+
 
 def get_logger(
     name: str, save_log: bool = False, dir_to_save: Path = None

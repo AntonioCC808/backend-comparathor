@@ -2,6 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models.product import Product, ProductMetadata
+from app.models.user import User
 from app.schemas.product import ProductCreate, ProductDTO, ProductUpdate
 from app.database import get_db
 
@@ -17,8 +18,34 @@ def get_products(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)) 
     return [ProductDTO.model_validate(product) for product in products]
 
 
+@router.get("/{product_id}", response_model=ProductDTO)
+def get_product(product_id: int, db: Session = Depends(get_db)) -> ProductDTO:
+    """
+    Retrieve a single product by its ID, including the Base64 image.
+    """
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return ProductDTO.model_validate(product)
+
+
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from app.models.product import Product, ProductMetadata
+from app.schemas.product import ProductCreate, ProductDTO, ProductUpdate
+from app.database import get_db
+from app.auth import get_current_user  # ✅ Import authentication function
+
+router = APIRouter()
+
+
 @router.post("/", response_model=ProductDTO)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> ProductDTO:
+def create_product(
+    product: ProductCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Require authentication
+) -> ProductDTO:
     """
     Create a new product record with an image in Base64 format.
     """
@@ -26,9 +53,9 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> Pro
         name=product.name,
         brand=product.brand,
         score=product.score,
-        user_id=product.user_id,
+        user_id=current_user.id,  # ✅ Use the authenticated user's ID
         product_type_id=product.product_type_id,
-        image_base64=product.image_base64,  # ✅ Save image in Base64 format
+        image_base64=product.image_base64,
     )
 
     db.add(new_product)
@@ -50,51 +77,62 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)) -> Pro
 
 
 @router.put("/{product_id}", response_model=ProductDTO)
-def update_product(product_id: int, product: ProductUpdate, db: Session = Depends(get_db)) -> ProductDTO:
+def update_product(
+    product_id: int,
+    product: ProductUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Require authentication
+) -> ProductDTO:
     """
-    Update an existing product record, including updating the image in Base64.
+    Update an existing product record, ensuring only the owner or an admin can modify it.
     """
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    # Update product details including the Base64 image
+    # Ensure only the product owner or an admin can update the product
+    if db_product.user_id != current_user.user_id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to edit this product")
+
+    # Update product details
     for key, value in product.model_dump().items():
         if key not in ["product_metadata", "user_id", "product_type_id"] and value is not None:
             setattr(db_product, key, value)
 
     # Update or add metadata attributes
     for meta in product.product_metadata or []:
-        db_metadata = db.query(ProductMetadata).filter(ProductMetadata.attribute == meta.attribute).first()
+        db_metadata = db.query(ProductMetadata).filter(
+            ProductMetadata.product_id == product_id, ProductMetadata.attribute == meta.attribute
+        ).first()
         if db_metadata:
             for key, value in meta.model_dump().items():
                 if value is not None:
                     setattr(db_metadata, key, value)
+
     db.commit()
     db.refresh(db_product)
     return ProductDTO.model_validate(db_product)
 
 
-@router.get("/{product_id}", response_model=ProductDTO)
-def get_product(product_id: int, db: Session = Depends(get_db)) -> ProductDTO:
-    """
-    Retrieve a single product by its ID, including the Base64 image.
-    """
-    product = db.query(Product).filter(Product.id == product_id).first()
-    if not product:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return ProductDTO.model_validate(product)
-
-
 @router.delete("/{product_id}")
-def delete_product(product_id: int, db: Session = Depends(get_db)) -> dict:
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # ✅ Require authentication
+) -> dict:
     """
-    Delete a product record.
+    Delete a product record, ensuring only the owner or an admin can delete it.
     """
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
 
+    # Ensure only the product owner or an admin can delete the product
+    if db_product.user_id != current_user.user_id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to delete this product")
+
     db.delete(db_product)
     db.commit()
     return {"detail": "Product deleted successfully"}
+
+
