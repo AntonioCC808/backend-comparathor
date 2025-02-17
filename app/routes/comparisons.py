@@ -43,7 +43,7 @@ def get_comparisons(
 def create_comparison(
         comparison: ComparisonBase,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user),  # ✅ Require authentication
+        current_user: User = Depends(get_current_user),
 ) -> ComparisonDTO:
     """
     Create a new comparison record.
@@ -58,7 +58,6 @@ def create_comparison(
             id=0,  # Temporary ID for frontend use
             title=comparison.title,
             description=comparison.description,
-            user_id=None,  # No user ID for unregistered users
             date_created=comparison.date_created,
             product_type_id=comparison.product_type_id,
             products=[
