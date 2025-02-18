@@ -1,0 +1,8 @@
+pandas
+sqlalchemy
+fastapi
+uvicorn
+pymysql
+pydantic
+python-jose
+passlib
