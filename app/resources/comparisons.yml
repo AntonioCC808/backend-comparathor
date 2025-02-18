@@ -1,27 +1,28 @@
 comparisons:
   - id: 1
     user_id: 1
-    title: "Comparison of Smartphones"
-    description: "Comparing smartphones based on features"
+    title: "Smartphone Comparison"
+    description: "Comparing flagship smartphones based on specs and performance"
     date_created: "2025-01-01"
     product_type_id: 1
+
   - id: 2
     user_id: 2
-    title: "T-Shirts Comparison"
-    description: "Comparing t-shirts based on size and comfort"
+    title: "T-Shirt Comfort Comparison"
+    description: "Comparing comfort, material, and size of t-shirts"
     date_created: "2025-01-02"
-    product_type_id: 1
+    product_type_id: 2
 
 comparison_products:
   - id: 1
     comparison_id: 1
     product_id: 1
   - id: 2
-    comparison_id: 2
-    product_id: 2
-  - id: 3
     comparison_id: 1
     product_id: 3
+  - id: 3
+    comparison_id: 2
+    product_id: 2
   - id: 4
     comparison_id: 2
     product_id: 4
