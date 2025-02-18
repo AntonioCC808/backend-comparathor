@@ -20,6 +20,7 @@ class Product(Base):
     name = Column(String)
     image_base64 = Column(String)
     brand = Column(String)
+    price = Column(Float)
     score = Column(Float)
     user = relationship("User", back_populates="products")
     product_type = relationship("ProductType", back_populates="products")
