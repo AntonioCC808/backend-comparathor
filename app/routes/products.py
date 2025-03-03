@@ -11,11 +11,20 @@ router = APIRouter()
 
 
 @router.get("/", response_model=list[ProductDTO])
-def get_products(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)) -> List[ProductDTO]:
+def get_products(
+    skip: int = 0,
+    limit: int = 10,
+    product_type_id: int = None,
+    db: Session = Depends(get_db)
+) -> List[ProductDTO]:
     """
-    Retrieve a list of products.
+    Retrieve a list of products, optionally filtered by product type.
     """
-    products = db.query(Product).offset(skip).limit(limit).all()
+    query = db.query(Product)
+    if product_type_id:
+        query = query.filter(Product.product_type_id == product_type_id)  #  Apply filter
+
+    products = query.offset(skip).limit(limit).all()
     return [ProductDTO.model_validate(product) for product in products]
 
 
