@@ -146,8 +146,8 @@ def delete_comparison(
     if not comparison:
         raise HTTPException(status_code=404, detail="Comparison not found")
 
-    # ✅ Ensure only the owner or an admin can delete it
-    if comparison.user_id != current_user.id and current_user.role != "admin":
+    # Ensure only the owner or an admin can delete it
+    if comparison.user_id != current_user.user_id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Not authorized to delete this comparison")
 
     db.delete(comparison)
