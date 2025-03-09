@@ -5,18 +5,17 @@ from app.database import Base
 
 class Comparison(Base):
     __tablename__ = "comparisons"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String, ForeignKey("users.user_id"))
-    title = Column(String(256))
-    description = Column(String)
-    date_created = Column(String)
 
-    product_type_id = Column(Integer, ForeignKey("product_types.id"), nullable=True)
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String(36), ForeignKey("users.user_id"))
+    title = Column(String(256))
+    description = Column(String(500))
+    date_created = Column(String(50))
+
+    product_type_id = Column(Integer, ForeignKey("product_types.id"))
 
     user = relationship("User", back_populates="comparisons")
     product_type = relationship("ProductType")
-
-    # Relationship to ComparisonProduct with cascade delete
     products = relationship(
         "ComparisonProduct",
         back_populates="comparison",
@@ -26,10 +25,10 @@ class Comparison(Base):
 
 class ComparisonProduct(Base):
     __tablename__ = "comparison_products"
+
     id = Column(Integer, primary_key=True, index=True)
     comparison_id = Column(Integer, ForeignKey("comparisons.id"))
     product_id = Column(Integer, ForeignKey("products.id"))
 
-    comparison = relationship("Comparison", back_populates="products",
-                              foreign_keys=[comparison_id])
-    product = relationship("Product", foreign_keys=[product_id])
+    comparison = relationship("Comparison", back_populates="products")
+    product = relationship("Product")
