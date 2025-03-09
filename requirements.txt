@@ -9,3 +9,4 @@ python-dotenv
 python-jose
 passlib
 prometheus-fastapi-instrumentator
+pyyaml
