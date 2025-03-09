@@ -4,6 +4,7 @@ fastapi
 uvicorn
 pymysql
 pydantic
+fire
 python-jose
 passlib
 prometheus-fastapi-instrumentator
