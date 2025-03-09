@@ -22,7 +22,7 @@ add_cors(app)
 
 # Create API Router
 api_router = APIRouter(
-    prefix="/api/v1",
+    prefix="/api",
 )
 
 # Include routers
