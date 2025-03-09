@@ -16,3 +16,4 @@ dependencies:
 - pydantic
 - python-jose
 - passlib
+- pyyaml
