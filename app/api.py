@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter
 
 from app.middlewares.cors import add_cors
 from app.routes import auth, products, comparisons, products_types, admin
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Initialize FastAPI
 app = FastAPI(
@@ -11,6 +12,10 @@ app = FastAPI(
     description="Application 'Comparathor' for managing products, comparisons, "
     "and metadata.",
 )
+
+# Enable Prometheus metrics
+Instrumentator().instrument(app).expose(app)
+
 
 add_cors(app)
 

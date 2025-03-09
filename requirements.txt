@@ -6,3 +6,4 @@ pymysql
 pydantic
 python-jose
 passlib
+prometheus-fastapi-instrumentator
