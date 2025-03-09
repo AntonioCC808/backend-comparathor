@@ -23,7 +23,7 @@ product_types:
 products:
   - id: 1
     product_type_id: 1
-    user_id: 1
+    user_id: admin1
     name: "Smartphone X"
     brand: "BrandX"
     price: 799
@@ -33,7 +33,7 @@ products:
 
   - id: 2
     product_type_id: 2
-    user_id: 1
+    user_id: admin1
     name: "Premium T-Shirt"
     brand: "FashionFit"
     price: 49
@@ -43,7 +43,7 @@ products:
 
   - id: 3
     product_type_id: 1
-    user_id: 1
+    user_id: admin1
     name: "Smartphone Z"
     brand: "BrandY"
     price: 899
@@ -53,7 +53,7 @@ products:
 
   - id: 4
     product_type_id: 2
-    user_id: 1
+    user_id: admin1
     name: "Casual T-Shirt"
     brand: "UrbanStyle"
     price: 35
