@@ -5,6 +5,7 @@ uvicorn
 pymysql
 pydantic
 fire
+python-dotenv
 python-jose
 passlib
 prometheus-fastapi-instrumentator
