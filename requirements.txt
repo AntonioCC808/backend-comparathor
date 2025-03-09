@@ -11,3 +11,4 @@ passlib
 prometheus-fastapi-instrumentator
 pyyaml
 mysqlclient
+pydantic[email]
