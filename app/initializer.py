@@ -1,4 +1,4 @@
-from initializers import users, product_types, products, product_metadata, comparisons, comparison_products
+from app.initializers import users, product_types, products, product_metadata, comparisons, comparison_products
 
 def initialize_all():
     """
