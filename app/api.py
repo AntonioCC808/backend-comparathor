@@ -8,7 +8,8 @@ from prometheus_fastapi_instrumentator import Instrumentator
 app = FastAPI(
     title="Comparathor",
     version="1.0.0",
-    docs_url="/api/docs",
+    docs_url="/api/v1/docs",
+    openapi_url="/api/v1/openapi.json",
     description="Application 'Comparathor' for managing products, comparisons, "
     "and metadata.",
 )
