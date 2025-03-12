@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.models.comparison import Comparison, ComparisonProduct
 from app.models.user import User
-from app.schemas.comparison import ComparisonDTO, ComparisonBase, ComparisonProductDTO
+from app.schemas.comparison import ComparisonDTO, ComparisonBase, ComparisonProductDTO, ComparisonUpdate
 from app.database import get_db
 from app.schemas.product import ProductDTO
 from app.utils import get_current_user
@@ -158,18 +158,18 @@ def delete_comparison(
 @router.put("/{comparison_id}", response_model=ComparisonBase)
 def update_comparison(
     comparison_id: int,
-    updated_data: ComparisonBase,
+    updated_data: ComparisonUpdate,  # ✅ Use the new schema
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     """
-    Update a comparison's title and description.
+    Update specific fields of a comparison (title and description).
 
     Parameters
     ----------
     comparison_id : int
         The ID of the comparison to update.
-    updated_data : ComparisonBase
+    updated_data : ComparisonUpdate
         The updated comparison details.
     db : Session
         The database session dependency.
@@ -190,8 +190,10 @@ def update_comparison(
     if comparison.user_id != current_user.user_id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Not authorized to update this comparison")
 
-    comparison.title = updated_data.title
-    comparison.description = updated_data.description
+    # Update only provided fields
+    update_data = updated_data.model_dump(exclude_unset=True)  # ✅ Exclude missing fields
+    for key, value in update_data.items():
+        setattr(comparison, key, value)
 
     db.commit()
     db.refresh(comparison)

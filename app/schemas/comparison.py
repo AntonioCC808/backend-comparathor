@@ -23,6 +23,14 @@ class ComparisonBase(BaseModel):
         from_attributes = True
 
 
+class ComparisonUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
 class ComparisonDTO(ComparisonBase):
     id: int
     products: List[ComparisonProductDTO]
