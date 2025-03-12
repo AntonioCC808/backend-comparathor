@@ -153,3 +153,47 @@ def delete_comparison(
     db.delete(comparison)
     db.commit()
     return {"message": "Comparison deleted successfully"}
+
+
+@router.put("/{comparison_id}", response_model=ComparisonBase)
+def update_comparison(
+    comparison_id: int,
+    updated_data: ComparisonBase,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Update a comparison's title and description.
+
+    Parameters
+    ----------
+    comparison_id : int
+        The ID of the comparison to update.
+    updated_data : ComparisonBase
+        The updated comparison details.
+    db : Session
+        The database session dependency.
+    current_user : User
+        The currently authenticated user.
+
+    Returns
+    -------
+    ComparisonBase
+        The updated comparison.
+    """
+    comparison = db.query(Comparison).filter(Comparison.id == comparison_id).first()
+
+    if not comparison:
+        raise HTTPException(status_code=404, detail="Comparison not found")
+
+    # Ensure only the owner or an admin can update it
+    if comparison.user_id != current_user.user_id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to update this comparison")
+
+    comparison.title = updated_data.title
+    comparison.description = updated_data.description
+
+    db.commit()
+    db.refresh(comparison)
+
+    return comparison
