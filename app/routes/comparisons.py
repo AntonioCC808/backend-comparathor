@@ -155,47 +155,32 @@ def delete_comparison(
     return {"message": "Comparison deleted successfully"}
 
 
-@router.put("/{comparison_id}", response_model=ComparisonBase)
+@router.put("/{comparison_id}", response_model=dict)
 def update_comparison(
-    comparison_id: int,
-    updated_data: ComparisonUpdate,  # ✅ Use the new schema
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+        comparison_id: int,
+        updated_data: ComparisonUpdate,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user),
 ):
     """
-    Update specific fields of a comparison (title and description).
-
-    Parameters
-    ----------
-    comparison_id : int
-        The ID of the comparison to update.
-    updated_data : ComparisonUpdate
-        The updated comparison details.
-    db : Session
-        The database session dependency.
-    current_user : User
-        The currently authenticated user.
-
-    Returns
-    -------
-    ComparisonBase
-        The updated comparison.
+    Update an existing comparison record, ensuring only the owner or an admin can modify it.
     """
-    comparison = db.query(Comparison).filter(Comparison.id == comparison_id).first()
+    db_comparison = db.query(Comparison).filter(Comparison.id == comparison_id).first()
 
-    if not comparison:
+    if not db_comparison:
         raise HTTPException(status_code=404, detail="Comparison not found")
 
-    # Ensure only the owner or an admin can update it
-    if comparison.user_id != current_user.user_id and current_user.role != "admin":
+    # Ensure only the owner or an admin can update the comparison
+    if db_comparison.user_id != current_user.user_id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Not authorized to update this comparison")
 
-    # Update only provided fields
-    update_data = updated_data.model_dump(exclude_unset=True)  # ✅ Exclude missing fields
-    for key, value in update_data.items():
-        setattr(comparison, key, value)
+    # Update comparison details, excluding restricted fields
+    for key, value in updated_data.model_dump().items():
+        if key not in ["id", "user_id", "products"] and value is not None:
+            setattr(db_comparison, key, value)
 
     db.commit()
-    db.refresh(comparison)
+    db.refresh(db_comparison)
 
-    return comparison
+    return {"message": "Comparison updated successfully"}
+
