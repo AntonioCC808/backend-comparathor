@@ -78,7 +78,7 @@ def login(user_data: UserBase, db: Session = Depends(get_db)) -> dict:
     if not user or not verify_password(user_data.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token({"sub": user.email, "user_id": user.user_id, "role": user.role})
-    return {"access_token": token, "token_type": "bearer", "user_id": user.user_id, "password": user.password}
+    return {"access_token": token, "token_type": "bearer", "user_id": user.user_id, "password": user.password, "role": user.role}
 
 
 @router.get("/me", response_model=UserDTO)
