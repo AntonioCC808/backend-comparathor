@@ -27,3 +27,8 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     username: Optional[str] = None
     password: Optional[str] = Field(None, min_length=6)  # Allow password updates
+
+
+class UserRoleUpdate(BaseModel):
+    user_id: str
+    role: str
